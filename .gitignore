@@ -1,0 +1,8 @@
+# log files
+*.log
+
+# mac os x
+.DS_Store
+
+# node.js dependencies
+node_modules
