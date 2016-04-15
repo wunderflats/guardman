@@ -132,48 +132,6 @@ describe('lib/guard', function () {
     })
   })
 
-  describe('filter \'read\'', function () {
-    it('resolves to an object that contains only the specified read-fields', function () {
-      const guarded = guard(permissions())(owner, item)
-
-      return guarded.filter('read', item).then(assert)
-
-      function assert (filtered) {
-        expect(Object.keys(filtered)).to.have.lengthOf(3)
-        expect(filtered).to.have.property('firstName', 'Maximilian')
-        expect(filtered).to.have.property('lastName', 'Schmitt')
-        expect(filtered).to.have.property('email', 'maximilian.schmitt@googlemail.com')
-        expect(filtered).to.not.have.property('password')
-      }
-    })
-  })
-
-  describe('filter \'create\'', function () {
-    it('returns an object that contains only the specified create-fields', function () {
-      // ['firstName', 'lastName', 'email', 'password']
-      const input = {
-        firstName: 'Jan',
-        lastName: 'Hase',
-        email: 'jan@wunderflats.com',
-        password: 'ichliebemaximilianschmitt',
-        salt: 'mehralsallesandere'
-      }
-
-      const guarded = guard(permissions())(guest)
-
-      return guarded.filter('create', input).then(assert)
-
-      function assert (filtered) {
-        expect(Object.keys(filtered)).to.have.lengthOf(4)
-        expect(filtered).to.have.property('firstName', 'Jan')
-        expect(filtered).to.have.property('lastName', 'Hase')
-        expect(filtered).to.have.property('email', 'jan@wunderflats.com')
-        expect(filtered).to.have.property('password', 'ichliebemaximilianschmitt')
-        expect(filtered).to.not.have.property('salt')
-      }
-    })
-  })
-
   describe('filter', function () {
     it('returns an object that contains only the action-specific fields', function () {
       const input = {
@@ -189,6 +147,52 @@ describe('lib/guard', function () {
         expect(Object.keys(filtered)).to.have.lengthOf(1)
         expect(filtered).to.have.property('email', 'maximilian.schmitt@googlemail.com')
         expect(filtered).to.not.have.property('password')
+      }
+    })
+
+    it('works with deep properties', function () {
+      const input = {
+        hello: 'world',
+        user: {
+          firstName: 'Max',
+          lastName: 'Schmitt'
+        },
+        address: {
+          street: 'Somewhere Street 61',
+          city: 'Berlin',
+          coordinates: {
+            lat: 1,
+            lng: 2
+          }
+        }
+      }
+
+      const guarded = guard({
+        actions: { guest: [
+          'read:hello',
+          'read:user.firstName',
+          'read:user.lastName',
+          'read:address.street',
+          'read:address.coordinates.lng'
+        ] }
+      })(guest)
+
+      return guarded.filter('read', input).then(assert)
+
+      function assert (filtered) {
+        expect(filtered).to.deep.equal({
+          hello: 'world',
+          user: {
+            firstName: 'Max',
+            lastName: 'Schmitt'
+          },
+          address: {
+            street: 'Somewhere Street 61',
+            coordinates: {
+              lng: 2
+            }
+          }
+        })
       }
     })
 
