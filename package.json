@@ -1,6 +1,6 @@
 {
   "name": "guardman",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An unopinionated library for protecting resources from users depending on their roles.",
   "main": "lib/index.js",
   "scripts": {
