@@ -71,7 +71,13 @@ describe('lib/guard', function () {
   })
 
   describe('determineRoles', function () {
-    it('constains only guest if user is guest', function () {
+    it('always returns a promise', function () {
+      const guarded = guard({ roles: { owner: () => true } })(unrelated, item)
+      return expect(guarded.determineRoles())
+        .to.be.an.instanceOf(Promise)
+    })
+
+    it('contains only guest if user is guest', function () {
       const guarded = guard(permissions())(undefined, item)
       return expect(guarded.determineRoles())
         .to.eventually.deep.equal(['guest'])
