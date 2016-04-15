@@ -163,7 +163,8 @@ describe('lib/guard', function () {
           coordinates: {
             lat: 1,
             lng: 2
-          }
+          },
+          hello: ['i', 'like', 'it']
         }
       }
 
@@ -173,7 +174,8 @@ describe('lib/guard', function () {
           'read:user.firstName',
           'read:user.lastName',
           'read:address.street',
-          'read:address.coordinates.lng'
+          'read:address.coordinates.lng',
+          'read:address.hello'
         ] }
       })(guest)
 
@@ -190,7 +192,8 @@ describe('lib/guard', function () {
             street: 'Somewhere Street 61',
             coordinates: {
               lng: 2
-            }
+            },
+            hello: ['i', 'like', 'it']
           }
         })
       }
